@@ -4,6 +4,7 @@ Created on Thu Oct 31 12:20:24 2024
 
 @author: Elena Almanza García
 """
+
 import serial
 import serial.tools.list_ports
 
@@ -130,7 +131,7 @@ def refresh():
 # función que cambia las dimensiones de la gráfica
 def changeVar(*args):
     yaMin = int(yAxis_min.get()) if (yAxis_min.get() != '' and yAxis_min.get() != '-') else 0
-    yaMax = int(yAxis_max.get()) if yAxis_max.get() != '' else 1023
+    yaMax = int(yAxis_max.get()) if yAxis_max.get() != '' else 4096
     ax.set_ylim(yaMin, yaMax)
     
     if displayInVoltage.get():
@@ -251,9 +252,9 @@ def saveCsv():
     
 # ------------------------------- App frame --------------------------------- #
 root = ctk.CTk()
-root.title("Análisis dinámico")
-root.geometry("1020x700") # tamaño de la ventana de la interfaz
-root.configure(fg_color = "#17161b") # color de fondo 
+root.title("Análisis dinámico de sistemas físicos")
+# root.geometry("1024x768") # tamaño de la ventana de la interfaz
+root.configure(fg_color = "#EEEEEE") # color de fondo
 root.grid_columnconfigure(0, weight = 1) # centrado
 root.grid_columnconfigure(1, weight = 1)
 root.grid_columnconfigure(2, weight = 1)
@@ -262,19 +263,19 @@ root.grid_rowconfigure(1, weight = 1)
 
 
 # ------------------------ Barra de herramientas ---------------------------- #
-toolbar = tk.Frame(root, bg = "gray")
+toolbar = tk.Frame(root, bg = "white")
 toolbar.grid(row = 0, column = 0, sticky = "w")
 
 icon = Image.open("refresh.png")
 icon = icon.resize((15, 15))
 icon = ImageTk.PhotoImage(icon)
 
-refreshButton = tk.Button(toolbar, image = icon, command = refresh, bg = "gray")
+refreshButton = tk.Button(toolbar, image = icon, command = refresh, bg = "white")
 refreshButton.grid(row = 0, column = 0)
 
 # --------------------------------Encabezado--------------------------------- #
 headFrame = ctk.CTkFrame(root)
-headFrame.configure(fg_color = "#17161b")
+headFrame.configure(fg_color = "#EEEEEE")
 headFrame.grid(sticky = "nsew", pady = (0, 0))
 headFrame.grid_columnconfigure(0, weight = 1)
 headFrame.grid_columnconfigure(1, weight = 1)
@@ -285,8 +286,11 @@ image = ctk.CTkImage(light_image = Image.open(imagePath), dark_image = Image.ope
 imageLabel = ctk.CTkLabel(headFrame, image = image, text = "")
 imageLabel.grid(row = 0, column = 0, sticky = "nsew")
 
-titleLabel = ctk.CTkLabel(headFrame, text = "Análisis Dinámico", font = ("Arial", 25, "bold"), text_color = "white")
+titleLabel = ctk.CTkLabel(headFrame, text = "PAPIME PE108324", font = ("Arial", 40, "bold"), text_color = "black")
 titleLabel.grid(row = 0, column = 1, sticky = "nsew")
+
+titleLabel_autor = ctk.CTkLabel(headFrame, text = "GUI desarrollada por: Elena Almanza García (421044834)", font = ("Arial", 40, "bold"), text_color = "black")
+titleLabel_autor.grid(row = 1, column = 1, sticky = "nsew")
 
 imagePath = "logoTecno.png"
 image = ctk.CTkImage(light_image = Image.open(imagePath), dark_image = Image.open(imagePath), size = (153, 50))
@@ -296,10 +300,10 @@ imageLabel.grid(row = 0, column = 2, sticky = "nsew")
 
 # ----------------------- Comunicación Serial ------------------------------- #
 # frame para organizar los widgets relacionados a la comunicación y puerto serial
-frame = ctk.CTkFrame(root, corner_radius = 10, fg_color = "#17161b")
+frame = ctk.CTkFrame(root, corner_radius = 10, fg_color = "#EEEEEE")
 frame.grid(padx = 10, pady = 0)
 
-serialFrame = ctk.CTkFrame(frame, corner_radius = 10, fg_color = "gray20")
+serialFrame = ctk.CTkFrame(frame, corner_radius = 10, fg_color = "gray80")
 serialFrame.grid(padx = 10, pady = 10)
 
 titleSerialFrame = ctk.CTkLabel(serialFrame, corner_radius = 10, text = "Comunicación Serial", font = ("Arial", 14, "bold"))
@@ -345,16 +349,16 @@ selectedStopbits.grid(row = 11, column = 0, padx = 10, pady = (0, 20))
 portConectBoton = ctk.CTkButton(serialFrame, 
                                 text = "INICIO", 
                                 command = conect, 
-                                text_color = "white", 
-                                fg_color = "gray")
+                                text_color = "black",
+                                fg_color = "gray60")
 portConectBoton.grid(row = 12, column = 0, padx = 10, pady = (0, 10))
 
 
 portDisconectBoton = ctk.CTkButton(serialFrame, 
                                 text = "PARO", 
                                 command = disconect, 
-                                text_color = "white", 
-                                fg_color = "gray")
+                                text_color = "black",
+                                fg_color = "gray60")
 portDisconectBoton.grid(row = 13, column = 0, padx = 10, pady = (0, 10))
 
 # --------------------------------- Check Boxes ----------------------------- #
@@ -363,11 +367,11 @@ displacement = tk.BooleanVar()
 velocity = tk.BooleanVar()
 acceleration = tk.BooleanVar()
 
-checkFrame = ctk.CTkFrame(frame, corner_radius = 10, fg_color = "gray20")
+checkFrame = ctk.CTkFrame(frame, corner_radius = 10, fg_color = "gray80")
 checkFrame.grid(row = 0, column = 3, padx = 10, pady = (0, 100))
 
 displacementCheck = ctk.CTkCheckBox(checkFrame, 
-                                    text = "Desplazamiento", 
+                                    text = "Posición",
                                     variable = displacement)
 displacementCheck.grid(row = 0, column = 3, padx= 10, pady = (10, 0))
 displacement.trace_add('write', showLines)
@@ -386,7 +390,7 @@ accelerationCheck.grid(row = 2, column = 3, padx = 10, pady = (0, 10))
 acceleration.trace_add('write', showLines)
 
 # ----------------------- Radio botón para la resolución ---------------------- #
-radioFrame = ctk.CTkFrame(frame, corner_radius = 10, fg_color = "gray20")
+radioFrame = ctk.CTkFrame(frame, corner_radius = 10, fg_color = "gray80")
 radioFrame.grid(row = 0, column = 3, padx = 10, pady = (200, 0))
 
 titleRadioFrame = ctk.CTkLabel(radioFrame, corner_radius = 10, text = "Resolución", font = ("Arial", 12, "bold"))
@@ -412,16 +416,16 @@ displayInVoltage.trace_add('write', changeVar)
 csvBoton = ctk.CTkButton(frame, 
                                 text = "GUARDAR", 
                                 command = saveCsv, 
-                                text_color = "white", 
-                                fg_color = "gray")
+                                text_color = "black",
+                                fg_color = "gray60")
 csvBoton.grid(row = 1, column = 3)
 
 # ----------------------- Botón para nueva adquisición ---------------------- #
 csvBoton = ctk.CTkButton(frame, 
                                 text = "NUEVA ADQUISICIÓN", 
                                 command = refresh, 
-                                text_color = "white", 
-                                fg_color = "gray")
+                                text_color = "black",
+                                fg_color = "gray60")
 csvBoton.grid(row = 1, column = 0)
 
 # ----------------------- Configuración del ráfico -------------------------- #
@@ -446,27 +450,27 @@ yAxis_max.trace_add('write', changeVar)
 
 # creamos la figura matplotlib
 fig = plt.figure(figsize = (8, 4))
-fig.set_facecolor("#17161b")
+fig.set_facecolor("#EEEEEE")
 ax = plt.axes()
-ax.set_facecolor("#17161b")
-ax.title.set_color('white')
-ax.xaxis.label.set_color('white')
-ax.yaxis.label.set_color('white')
+ax.set_facecolor("#EEEEEE")
+ax.title.set_color('black')
+ax.xaxis.label.set_color('black')
+ax.yaxis.label.set_color('black')
 ax.grid(alpha = 0.1)
-ax.tick_params(axis = 'x', colors = 'white')
-ax.tick_params(axis = 'y', colors = 'white')
+ax.tick_params(axis = 'x', colors = 'black')
+ax.tick_params(axis = 'y', colors = 'black')
 
 x = np.arange(lengthGraph)
 y = np.zeros(lengthGraph)
 
 # creamos una línea para cada checkbox
-lineDisp, = ax.plot(x, y, label = "Desplazamiento", color = 'orange')
+lineDisp, = ax.plot(x, y, label = "Posición", color = 'orange')
 lineVel, = ax.plot(x, np.zeros(lengthGraph), label = "Velocidad", color = 'blue')
 lineAcc, = ax.plot(x, np.zeros(lengthGraph), label = "Aceleración", color = 'red')
 
 ax.legend()
   
-plt.axis([0, lengthGraph, 0, 1023])
+plt.axis([0, lengthGraph, 0, 4096])
 plt.ylabel('Valor Lectura')
 plt.title('Serial COM Data')
 
